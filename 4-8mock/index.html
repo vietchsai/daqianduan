@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta content="IE=edge" http-equiv="X-UA-Compatible">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>4-8 mock作业</title>
+  <link href="//cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+      .condition-wrap {
+          background: #eeeeee;
+          border-left: solid 3px #6495ed;
+          padding: 10px 10px 10px 20px;
+      }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>返回结果</h2>
+  <div class="condition-wrap form-inline">
+    <label for="i-page">页码</label>
+    <input class="form-control" id="i-page" type="text" value="1">
+    <label for="i-num">数量</label>
+    <input class="form-control" id="i-num" type="text" value="3">
+    <button class="btn btn-primary" id="b-search" type="button">提交</button>
+  </div>
+  <pre id="back-info" style="margin-top: 20px;"></pre>
+</div>
+<script src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js" type="text/javascript"></script>
+<script src="//cdn.bootcdn.net/ajax/libs/Mock.js/1.0.1-beta3/mock-min.js" type="text/javascript"></script>
+<script>
+  /**
+   * 获取地址栏参数
+   * @param name 参数名
+   * @returns {string|boolean}
+   */
+  function getQueryParam(name) {
+    let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+    let r = window.location.search.substr(1).match(reg);
+    if (r != null) {
+      return unescape(r[2]);
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * Mock数据
+   */
+  Mock.mock(/\/api\/lists/, 'get', _ => {
+    const page = getQueryParam("page");
+    const num = getQueryParam("num");
+    if (!page && !num) {
+      top.location.href = `./?page=1&num=3`;
+    }
+    return Mock.mock({
+      'status': 200,
+      [`data|${num}`]: [{
+        'tid|+1': num * (page - 1) + 1,
+        'title': '@ctitle(5, 10)',
+        'catalog': 'index',
+        'fav': '@natural(1000, 10000)',
+        'created': '@date(yyyy-MM-dd HH:mm:ss)',
+        'isEnd': (item) => {
+          // 如果是最后一个项目的话，isEnd置为1
+          return item.context.currentContext['tid'] === page * num ? 1 : 0;
+        },
+        'answer': '@integer(0, 100)',
+        'user': {
+          'avatar': '@image',
+          'name': '@cname',
+          'isvip|0-1': 1,
+          'level|1-10': 1
+        }
+      }],
+      'msg': '返回Mock数据'
+    })
+  });
+
+  // 页面载入完毕执行
+  $(document).ready(function () {
+    // 绑定按钮功能
+    $('#b-search').bind('click', function (e) {
+      let page = parseInt($('#i-page').val());
+      let num = parseInt($('#i-num').val());
+      top.location.href = `./?page=${page}&num=${num}`;
+    })
+
+    // 保存地址栏参数状态
+    const page = getQueryParam("page");
+    const num = getQueryParam("num");
+    page ? $('#i-page').val(page) : "1";
+    num ? $('#i-num').val(num) : "3";
+
+    // 获取mock数据
+    $.ajax({
+      url: './api/lists',
+      type: 'get',
+      dataType: 'json'
+    })
+      .done(function (data, status, xhr) {
+        $('#back-info').text(JSON.stringify(data, null, 4));
+      })
+  });
+</script>
+</body>
+</html>
