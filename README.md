@@ -7,3 +7,7 @@
 ### 2-7 webpack作业
  - [代码地址](https://github.com/vietchsai/daqianduan/blob/master/3-2-7webpack/)
  - [演示地址](http://www.vietch.com/study/daqianduan/2-7webpack/)
+
+### 1-6 koa作业
+ - [代码地址](https://github.com/vietchsai/daqianduan/blob/master/5-1-6koa/index.js)
+ - [说明地址](https://github.com/vietchsai/daqianduan/blob/master/5-1-6koa/README.md)
