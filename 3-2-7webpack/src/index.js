@@ -1,16 +1,10 @@
 require('./index.scss');
 
-import happy from './happy.jpg';
-import logo from './logo.png';
+console.log("hello world");
 
-// 生成img节点
-function genImage(src, name){
-  let img = new Image();
-  img.src = src;
-  img.alt = name;
-  img.id = "image-" + name;
-  return img;
+// 根据不提供环境提供的支持
+if (process.env.NODE_ENV === "development"){
+  console.log("localhost test mode");
+}else{
+  console.log("online mode");
 }
-
-document.body.appendChild(genImage(happy, "happy"));
-document.body.appendChild(genImage(logo, "logo"));
