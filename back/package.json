@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon ./src/index.js",
     "run": "node ./src/index.js"
   },
   "keywords": [],
@@ -18,5 +19,8 @@
     "koa-json": "^2.0.2",
     "koa-router": "^9.4.0",
     "koa-static": "^5.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
   }
 }
