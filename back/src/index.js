@@ -1,10 +1,10 @@
-const Koa = require('koa');
-const path = require('path');
-const KoaBody = require('koa-body');
-const json = require('koa-json');
-const cors = require('@koa/cors');
-const helmet = require('koa-helmet');
-const statics = require('koa-static');
+import Koa from 'koa';
+import path from 'path';
+import KoaBody from 'koa-body';
+import json from 'koa-json';
+import cors from '@koa/cors';
+import helmet from 'koa-helmet';
+import statics from 'koa-static';
 
 // 实例化
 const app = new Koa();
