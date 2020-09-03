@@ -2,29 +2,37 @@
   <div id="app">
     <div class="layui-container">
       <form class="layui-form layui-form-pane" action="">
-        <div class="layui-form-item">
+        <div class="layui-form-item" :class="{'form-group--error': $v.name.$error}">
           <label class="layui-form-label">用户名</label>
           <div class="layui-input-inline">
-            <input type="text" name="title" placeholder="" autocomplete="off"
-                   class="layui-input" v-model="name" required >
+            <input type="text"
+                   name="title"
+                   placeholder=""
+                   autocomplete="off"
+                   class="layui-input"
+                   v-model.trim="name"
+                   @input="setName($event.target.value)"
+            >
           </div>
+          <div class="error layui-form-mid" v-if="!$v.name.required">用户名不得为空</div>
+          <div class="error layui-form-mid" v-if="!$v.name.email">用户名输入格式错误</div>
         </div>
         <div class="layui-form-item">
           <label class="layui-form-label">密码</label>
           <div class="layui-input-inline">
             <input type="password" name="title" autocomplete="off" class="layui-input"
-                   v-model="password" required >
+                   v-model="password">
           </div>
         </div>
         <div class="layui-form-item">
           <label class="layui-form-label">验证码</label>
           <div class="layui-input-inline">
             <input type="text" name="code" placeholder=""
-                   autocomplete="off" class="layui-input" v-model="code" required>
+                   autocomplete="off" class="layui-input" v-model="code">
           </div>
           <div class="layui-form-mid svg" v-html="svg" @click="getCaptcha">图片</div>
         </div>
-        <button class="layui-btn">点击登陆</button>
+        <button type="button" class="layui-btn" @click="checkForm">点击登陆</button>
         <a href="./forget.html" class="imc-link">忘记密码</a>
       </form>
     </div>
@@ -33,6 +41,7 @@
 
 <script>
 import axios from 'axios';
+import { required, email } from 'vuelidate/lib/validators';
 export default {
   name: 'app',
   data () {
@@ -40,8 +49,20 @@ export default {
       svg: '',
       name: '',
       password: '',
-      code: ''
+      code: '',
+      errorMessage: ''
     };
+  },
+  validations: {
+    name: {
+      required, email
+    },
+    password: {
+      required
+    },
+    code: {
+      required
+    }
   },
   mounted () {
     this.getCaptcha();
@@ -57,6 +78,22 @@ export default {
             }
           }
         });
+    },
+    checkForm () {
+      this.errorMessage = [];
+      if (!this.name) {
+        this.errorMessage.push('姓名为空!');
+      }
+      if (!this.password) {
+        this.errorMessage.push('密码为空!');
+      }
+      if (!this.code) {
+        this.errorMessage.push('验证码为空!');
+      }
+    },
+    setName (value) {
+      this.name = value;
+      this.$v.name.$touch();
     }
   }
 };
@@ -83,5 +120,15 @@ input{
 .svg{
   position: relative;
   top: -15px;
+}
+
+.error{
+  display: none;
+}
+
+.form-group--error{
+  .error{
+    display: block;
+  }
 }
 </style>
