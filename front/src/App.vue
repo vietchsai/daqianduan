@@ -2,20 +2,20 @@
   <div id="app">
     <div class="layui-container">
       <form class="layui-form layui-form-pane" action="">
-        <div class="layui-form-item" :class="{'form-group--error': $v.name.$error}">
+        <div class="layui-form-item">
           <label class="layui-form-label">用户名</label>
-          <div class="layui-input-inline">
-            <input type="text"
-                   name="title"
-                   placeholder=""
-                   autocomplete="off"
-                   class="layui-input"
-                   v-model.trim="name"
-                   @input="setName($event.target.value)"
-            >
-          </div>
-          <div class="error layui-form-mid" v-if="!$v.name.required">用户名不得为空</div>
-          <div class="error layui-form-mid" v-if="!$v.name.email">用户名输入格式错误</div>
+          <ValidationProvider name="用户名" rules="required|email" v-slot="{errors}">
+            <div class="layui-input-inline">
+              <input type="text"
+                     name="name"
+                     placeholder=""
+                     autocomplete="off"
+                     class="layui-input"
+                     v-model.trim="name"
+              />
+            </div>
+            <span class="error layui-form-mid">{{errors[0]}}</span>
+          </ValidationProvider>
         </div>
         <div class="layui-form-item">
           <label class="layui-form-label">密码</label>
@@ -41,9 +41,22 @@
 
 <script>
 import axios from 'axios';
-import { required, email } from 'vuelidate/lib/validators';
+import { ValidationProvider, extend } from 'vee-validate';
+import * as rules from 'vee-validate/dist/rules';
+import zh from 'vee-validate/dist/locale/zh_CN.json';
+
+for (const rule in rules) {
+  extend(rule, {
+    ...rules[rule],
+    message: zh.messages[rule]
+  });
+}
+
 export default {
   name: 'app',
+  components: {
+    ValidationProvider
+  },
   data () {
     return {
       svg: '',
@@ -52,17 +65,6 @@ export default {
       code: '',
       errorMessage: ''
     };
-  },
-  validations: {
-    name: {
-      required, email
-    },
-    password: {
-      required
-    },
-    code: {
-      required
-    }
   },
   mounted () {
     this.getCaptcha();
@@ -90,10 +92,6 @@ export default {
       if (!this.code) {
         this.errorMessage.push('验证码为空!');
       }
-    },
-    setName (value) {
-      this.name = value;
-      this.$v.name.$touch();
     }
   }
 };
@@ -121,14 +119,8 @@ input{
   position: relative;
   top: -15px;
 }
-
 .error{
-  display: none;
+  color: red;
 }
 
-.form-group--error{
-  .error{
-    display: block;
-  }
-}
 </style>
