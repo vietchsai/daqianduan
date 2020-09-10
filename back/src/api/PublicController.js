@@ -7,7 +7,7 @@ class PublicController{
       size: 4,
       noise: Math.floor(Math.random() * 10),
       width: 150,
-      height: 50
+      height: 38
     });
     ctx.body = {
       "code": 200,
